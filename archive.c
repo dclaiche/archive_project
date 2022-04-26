@@ -29,7 +29,9 @@ pack(char * const fn, FILE *outfp)
           else if (S_ISREG(st.st_mode))
               {
                     fprintf(stderr, "Packing `%s'\n", fn);
-                    printf("%zu", fn);
+                    fprintf(outfp, "%zu:%s%zu:", strlen(fn), fn, st.st_size);
+
+
                       }
             else
                 {
@@ -47,11 +49,13 @@ main(int argc, char *argv[])
      }
     // Then we set first input file/directory as the name of our archive
     char *file_name = argv[argc-1];
-    if (argc > 2)
+    if (argc >= 2)
         { /* Packing files */
+        printf("Unpacking Files now\n");
         FILE *fp = fopen(file_name, "w");
-        for (int argind = 1; argind < argc - 1; ++argind)
+        for (int argind = 1; argind <= argc - 1; ++argind)
           {
+            printf("It's going");
             pack(argv[argind], fp);
           }
         }
