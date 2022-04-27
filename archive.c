@@ -24,7 +24,7 @@ pack(char * const fn, FILE *outfp)
         if (S_ISDIR(st.st_mode))
             {
                fprintf(stderr, "Recursing `%s'\n", fn);
-               fprintf(outfp, "%zu:%s/:", (strlen(fn)+1), fn);
+               fprintf(outfp, "%zu:%s/", (strlen(fn)+1), fn);
                DIR* folder = opendir(fn);
                chdir(fn);
                // Error check directory opening
@@ -34,7 +34,7 @@ pack(char * const fn, FILE *outfp)
                // Create directory structure and read it
                struct dirent *dt;
                dt = readdir(folder);
-               // Start loopin through directory (ever call to readdir() points to next in dir
+               // Start loopin through directory (every call to readdir() points to next in dir
                while(dt = readdir(folder)) {
                   struct stat dir;
                   stat(dt->d_name, &dir);
@@ -43,11 +43,13 @@ pack(char * const fn, FILE *outfp)
                    pack(dt->d_name, outfp);
                   }
                 }
-               fprintf(outfp, ":0");
+               fprintf(outfp, "0:");
+               chdir("..");
             }
           else if (S_ISREG(st.st_mode))
               {
                     fprintf(stderr, "Packing `%s'\n", fn);
+                    fprintf(stderr, "Here is the filesize %zu", st.st_size);
                     fprintf(outfp, "%zu:%s%zu:", strlen(fn), fn, st.st_size);
                     // Now we pack the contents
                     // Open the file
@@ -98,5 +100,4 @@ main(int argc, char *argv[])
             pack(argv[argind], fp);
           }
         }
-
 }
